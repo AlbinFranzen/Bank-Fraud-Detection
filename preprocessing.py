@@ -6,6 +6,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.base import BaseEstimator, TransformerMixin
 
+### NUMERICAL PREPROCESSOR
+
 # Custom transformer to handle outlier removal after scaling
 class OutlierRemover(BaseEstimator, TransformerMixin):
     def __init__(self, threshold=3.0):
@@ -31,7 +33,7 @@ def drop_columns(X):
         return X.drop(columns=['velocity_4w', 'session_length_in_minutes'])
     return X
 
-# Define the ColumnTransformer pipeline
+# Define the ColumnTransformer pipeline with drop columns integrated
 numerical_preprocessor = Pipeline([
     ('preprocessor', ColumnTransformer(
         transformers=[
@@ -70,9 +72,43 @@ numerical_preprocessor = Pipeline([
         remainder='passthrough',  # Keep all other columns except those explicitly specified
         verbose_feature_names_out=False  # Prevent verbose names for ease of interpretation
     )),
-    # Drop specified columns
+    # Drop specified columns directly in the numerical preprocessor
     ('drop_columns', FunctionTransformer(drop_columns, validate=False))
 ])
 
+### BOOLEAN PREPROCESSOR
+
+# Define transformation functions for each feature in boolean preprocessing
+def total_valid_phones(X):
+    return (X['phone_home_valid'] + X['phone_mobile_valid']).values.reshape(-1, 1)
+
+def foreign_long_session(X):
+    return (X['foreign_request'] & X['keep_alive_session']).astype(int).values.reshape(-1, 1)
+
+def device_and_account_history(X):
+    return (X['device_fraud_count'] * X['keep_alive_session']).values.reshape(-1, 1)
+
+def total_risk_flags(X):
+    high_risk_features = ['email_is_free', 'foreign_request', 'has_other_cards', 'keep_alive_session']
+    return X[high_risk_features].sum(axis=1).values.reshape(-1, 1)
+
+# Define the ColumnTransformer for boolean feature engineering
+boolean_preprocessor = ColumnTransformer(
+    transformers=[
+        ('total_valid_phones', FunctionTransformer(total_valid_phones), ['phone_home_valid', 'phone_mobile_valid']),
+        ('foreign_long_session', FunctionTransformer(foreign_long_session), ['foreign_request', 'keep_alive_session']),
+        ('device_and_account_history', FunctionTransformer(device_and_account_history), ['device_fraud_count', 'keep_alive_session']),
+        ('total_risk_flags', FunctionTransformer(total_risk_flags), ['email_is_free', 'foreign_request', 'has_other_cards', 'keep_alive_session']),
+        ('source_encoded', 'passthrough', ['source'])  # Assuming 'source' is preprocessed externally
+    ],
+    remainder='passthrough'
+)
+
+# Combined pipeline that runs numerical preprocessing followed by boolean preprocessing
+preprocessor = Pipeline([
+    ('numerical_processing', numerical_preprocessor),
+    ('boolean_processing', boolean_preprocessor)
+])
+
 # Usage example:
-# transformed_data = numerical_preprocessor.fit_transform(train_df)
+# transformed_data = full_pipeline.fit_transform(train_df)
