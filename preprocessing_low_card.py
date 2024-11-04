@@ -78,7 +78,7 @@ class LowCardinalityPreprocessor(BaseEstimator, TransformerMixin):
         
         return transformed_df
 
-# TESTING -----------------
+# TESTING -------------------------------
 if __name__ == "__main__":
     # testing some data
     sample_data = pd.DataFrame({
