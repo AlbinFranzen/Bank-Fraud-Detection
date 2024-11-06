@@ -1,12 +1,10 @@
 import numpy as np
 import pandas as pd
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler, OrdinalEncoder, FunctionTransformer
+from sklearn.preprocessing import StandardScaler, OrdinalEncoder, FunctionTransformer, OneHotEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.base import BaseEstimator, TransformerMixin
-
-### NUMERICAL PREPROCESSOR
 
 # Custom transformer to handle outlier removal after scaling
 class OutlierRemover(BaseEstimator, TransformerMixin):
@@ -33,6 +31,7 @@ def drop_columns(X):
         return X.drop(columns=['velocity_4w', 'session_length_in_minutes'])
     return X
 
+### NUMERICAL PREPROCESSOR
 # Define the ColumnTransformer pipeline with drop columns integrated
 numerical_preprocessor = Pipeline([
     ('preprocessor', ColumnTransformer(
@@ -77,7 +76,6 @@ numerical_preprocessor = Pipeline([
 ])
 
 ### BOOLEAN PREPROCESSOR
-
 # Define transformation functions for each feature in boolean preprocessing
 def total_valid_phones(X):
     return (X['phone_home_valid'] + X['phone_mobile_valid']).values.reshape(-1, 1)
@@ -104,11 +102,31 @@ boolean_preprocessor = ColumnTransformer(
     remainder='passthrough'
 )
 
-# Combined pipeline that runs numerical preprocessing followed by boolean preprocessing
+### CATEGORICAL PREPROCESSOR
+# Low-cardinality categorical features (One-Hot Encoding)
+low_card_preprocessor = ColumnTransformer(
+    transformers=[
+        ('one_hot_encoding', OneHotEncoder(handle_unknown='ignore', sparse_output=False), 'low_card')
+    ],
+    remainder='passthrough'
+)
+
+# High-cardinality categorical features (Ordinal Encoding)
+high_card_preprocessor = ColumnTransformer(
+    transformers=[
+        ('ordinal_encoding', OrdinalEncoder(), 'high_card')
+    ],
+    remainder='passthrough'
+)
+
+### COMBINED PREPROCESSOR PIPELINE
+# Combined pipeline that runs numerical preprocessing, boolean preprocessing, and categorical preprocessing
 preprocessor = Pipeline([
     ('numerical_processing', numerical_preprocessor),
-    ('boolean_processing', boolean_preprocessor)
+    ('boolean_processing', boolean_preprocessor),
+    ('low_card_categorical_processing', low_card_preprocessor),
+    ('high_card_categorical_processing', high_card_preprocessor)
 ])
 
 # Usage example:
-# transformed_data = full_pipeline.fit_transform(train_df)
+# transformed_data = preprocessor.fit_transform(train_df)
