@@ -12,6 +12,8 @@ from imblearn.under_sampling import NearMiss
 from collections import Counter
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.preprocessing import KBinsDiscretizer
+from preprocessing_low_card import LowCardinalityPreprocessor
 
 # Custom Transformers and Helper Functions
 # =======================================
@@ -89,32 +91,23 @@ def numerical_pipeline():
         ('preprocessor', ColumnTransformer(
             transformers=[
                 ('name_email_similarity', Pipeline([
-                    ('binning', FunctionTransformer(lambda X: pd.cut(X, bins=[0, 0.24, 0.48, 0.72, 0.96, 1.0], labels=False).values.reshape(-1, 1), validate=False)),
-                    ('ordinal_encoder', OrdinalEncoder())
+                    ('binning', FunctionTransformer(lambda X: pd.cut(X.squeeze(), bins=[0, 0.24, 0.48, 0.72, 0.96, 1.0], labels=False).values.reshape(-1, 1), validate=False)),
+                    ('ordinal_encoder', OrdinalEncoder()),
                 ]), ['name_email_similarity']),
 
                 ('days_since_request', Pipeline([
-                    ('log_transform', FunctionTransformer(np.log1p, validate=False)),
-                    ('scaler', StandardScaler()),
-                    ('outlier_remover', OutlierRemover())
+                    ('log_transform', FunctionTransformer(lambda X: pd.DataFrame(np.log1p(X.to_numpy())), validate=False)),
                 ]), ['days_since_request']),
 
                 ('intended_balcon_amount', Pipeline([
                     ('missing_flag', FunctionTransformer(lambda x: (x == -1).astype(int), validate=False)),
                     ('imputer', SimpleImputer(missing_values=-1, strategy='constant', fill_value=0)),
                     ('log_transform', FunctionTransformer(np.log1p, validate=False)),
-                    ('scaler', StandardScaler()),
-                    ('outlier_remover', OutlierRemover())
                 ]), ['intended_balcon_amount']),
 
                 ('velocity_6h', Pipeline([
                     ('negative_imputer', SimpleImputer(missing_values=-1, strategy='constant', fill_value=0)),
-                    ('scaler', StandardScaler())
-                ]), ['velocity_6h']),
-
-                ('velocity_24h', Pipeline([
-                    ('scaler', StandardScaler())
-                ]), ['velocity_24h'])
+                ]), ['velocity_6h'])
             ],
             remainder='passthrough',
             verbose_feature_names_out=False
@@ -135,25 +128,51 @@ def boolean_pipeline():
         remainder='passthrough'
     )
 
-# 7. Categorical Feature Processing
-def categorical_pipeline():
-    low_card_preprocessor = ColumnTransformer([
-        ('one_hot_encoding', CustomOneHotEncoder(['low_card']), 'low_card')
-    ], remainder='passthrough')
+# 7. Low Cardinality Feature Engineering Pipeline
+def low_cardinality_pipeline():
+    return Pipeline([
+        # Create bins for 'proposed_credit_limit' and 'income', then drop specified columns
+        ('preprocess', FunctionTransformer(
+            lambda X: (
+                X.assign(
+                    credit_bin=pd.cut(X['proposed_credit_limit'], bins=[0, 500, 1000, 2000, 5000, 10000, float('inf')], 
+                                      labels=['very_low', 'low', 'medium', 'high', 'very_high', 'extreme']),
+                    income_bin=pd.cut(X['income'], bins=[0, 0.2, 0.4, 0.6, 0.8, 1.0], 
+                                      labels=['very_low', 'low', 'medium', 'high', 'very_high'])
+                )
+                .drop(columns=['velocity_4w', 'session_length_in_minutes'], errors='ignore')
+            ), validate=False
+        )),
+        
+        # Encode categorical features
+        ('encode', ColumnTransformer(
+            transformers=[
+                ('onehot', OneHotEncoder(drop='first', handle_unknown='ignore'), [
+                    'payment_type', 'employment_status', 'housing_status', 
+                    'device_os', 'month', 'credit_bin', 'income_bin'
+                ]),
+                ('ordinal', OrdinalEncoder(), ['customer_age'])
+            ],
+            remainder='passthrough',
+            verbose_feature_names_out=False
+        ))
+    ])
 
+# 8. High Cardinality Feature Engineering Pipeline
+def high_cardinality_pipeline():
     high_card_preprocessor = ColumnTransformer([
         ('ordinal_encoding', CategoricalConverter(['high_card']), 'high_card')
     ], remainder='passthrough')
 
-    return low_card_preprocessor, high_card_preprocessor
+    return high_card_preprocessor
 
-# 8. Scaling and Selection Pipeline
+# 9. Scaling and Selection Pipeline
 def scaling_and_selection_pipeline():
     min_max_transformer = FunctionTransformer(lambda X: pd.concat([X.drop(columns=X.select_dtypes(include=['float64', 'int64']).columns), pd.DataFrame(MinMaxScaler().fit_transform(X.select_dtypes(include=['float64', 'int64'])), columns=X.select_dtypes(include=['float64', 'int64']).columns, index=X.index)], axis=1), validate=False)
     variance_selector = VarianceThreshold()
     return min_max_transformer, variance_selector
 
-# 9. Resampling Pipeline
+# 10. Resampling Pipeline
 def resampling_pipeline(X, y):
     print(f'Test dataset samples per class {Counter(y)}')
     nm = NearMiss(sampling_strategy=1, n_jobs=-1)
@@ -165,7 +184,8 @@ def resampling_pipeline(X, y):
 # ===============================
 numerical_preprocessor = numerical_pipeline()
 boolean_preprocessor = boolean_pipeline()
-low_card_preprocessor, high_card_preprocessor = categorical_pipeline()
+low_card_preprocessor = low_cardinality_pipeline()
+high_card_preprocessor = high_cardinality_pipeline()
 min_max_transformer, variance_selector = scaling_and_selection_pipeline()
 
 preprocessor = Pipeline([
@@ -233,3 +253,5 @@ def variance_threshold_test(X_scaled_nm):
 # ===================
 # transformed_data = preprocessor.fit_transform(train_df)
 # You can now use the transformed data for training/testing models or further analysis.
+
+
