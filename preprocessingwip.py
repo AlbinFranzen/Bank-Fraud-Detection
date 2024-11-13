@@ -124,12 +124,12 @@ def resampling_pipeline(X, y):
     X_resampled_sm, y_resampled_sm = smote.fit_resample(X, y)
     print('After SMOTE resampling dataset shape %s' % Counter(y_resampled_sm))
     
-    # NearMiss for Under-Sampling
-    nm = NearMiss(sampling_strategy=1, n_jobs=-1)
-    X_resampled_nm, y_resampled_nm = nm.fit_resample(X_resampled_sm, y_resampled_sm)
-    print('After NearMiss resampling dataset shape %s' % Counter(y_resampled_nm))
+    # # NearMiss for Under-Sampling
+    # nm = NearMiss(sampling_strategy=1, n_jobs=-1)
+    # X_resampled_nm, y_resampled_nm = nm.fit_resample(X_resampled_sm, y_resampled_sm)
+    # print('After NearMiss resampling dataset shape %s' % Counter(y_resampled_nm))
     
-    return X_resampled_nm, y_resampled_nm
+    return X_resampled_sm, y_resampled_sm
 
 # Final Usage Example
 # ===================
