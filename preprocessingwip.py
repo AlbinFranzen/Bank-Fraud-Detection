@@ -38,25 +38,31 @@ numerical_pipeline = Pipeline([
     ('scaler', RobustScaler())
 ])
 
-# Categorical Preprocessor
-categorical_pipeline = ColumnTransformer(
-    transformers=[
-        ('one_hot', OneHotEncoder(sparse_output=False, handle_unknown='ignore'), selector(dtype_include='object')),
-        ('ordinal', OrdinalEncoder(), ['high_card'])
-    ],
-    remainder='passthrough'
-)
+# Low Card Preprocessor
+low_card_pipeline = Pipeline([
+    ('one_hot', OneHotEncoder(sparse_output=False, handle_unknown='ignore'))
+])
+
+# High Card Preprocessor
+high_card_pipeline = Pipeline([
+    ('ordinal', OrdinalEncoder())
+])
 
 # Boolean Feature Engineering Pipeline
-boolean_pipeline = ColumnTransformer(
-    transformers=[
-        ('total_valid_phones', FunctionTransformer(lambda X: (X['phone_home_valid'] + X['phone_mobile_valid']).values.reshape(-1, 1)), ['phone_home_valid', 'phone_mobile_valid']),
-        ('foreign_long_session', FunctionTransformer(lambda X: (X['foreign_request'] & X['keep_alive_session']).astype(int).values.reshape(-1, 1)), ['foreign_request', 'keep_alive_session']),
-        ('device_and_account_history', FunctionTransformer(lambda X: (X['device_fraud_count'] * X['keep_alive_session']).values.reshape(-1, 1)), ['device_fraud_count', 'keep_alive_session']),
-        ('total_risk_flags', FunctionTransformer(lambda X: X[['email_is_free', 'foreign_request', 'has_other_cards', 'keep_alive_session']].sum(axis=1).values.reshape(-1, 1)), ['email_is_free', 'foreign_request', 'has_other_cards', 'keep_alive_session'])
-    ],
-    remainder='passthrough'
-)
+boolean_pipeline = Pipeline([
+    ('total_valid_phones', FunctionTransformer(
+        lambda X: pd.DataFrame((X['phone_home_valid'] + X['phone_mobile_valid']).values.reshape(-1, 1), columns=['total_valid_phones'])
+    )),
+    ('foreign_long_session', FunctionTransformer(
+        lambda X: pd.DataFrame((X['foreign_request'] & X['keep_alive_session']).astype(int).values.reshape(-1, 1), columns=['foreign_long_session'])
+    )),
+    ('device_and_account_history', FunctionTransformer(
+        lambda X: pd.DataFrame((X['device_fraud_count'] * X['keep_alive_session']).values.reshape(-1, 1), columns=['device_and_account_history'])
+    )),
+    ('total_risk_flags', FunctionTransformer(
+        lambda X: pd.DataFrame(X[['email_is_free', 'foreign_request', 'has_other_cards', 'keep_alive_session']].sum(axis=1).values.reshape(-1, 1), columns=['total_risk_flags'])
+    ))
+])
 
 # Scaling and Selection Pipeline
 scaling_and_selection_pipeline = Pipeline([
@@ -66,14 +72,14 @@ scaling_and_selection_pipeline = Pipeline([
 
 # Combined Preprocessing Pipeline
 # ===============================
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('numerical', numerical_pipeline, selector(dtype_exclude='object')),
-        ('categorical', categorical_pipeline, selector(dtype_include='object')),
-        ('boolean', boolean_pipeline, ['phone_home_valid', 'phone_mobile_valid', 'foreign_request', 'keep_alive_session'])
-    ],
-    remainder='drop'
-)
+# preprocessor = ColumnTransformer(
+#     transformers=[
+#         ('numerical', numerical_pipeline, selector(dtype_exclude='object')),
+#         ('categorical', categorical_pipeline, selector(dtype_include='object')),
+#         ('boolean', boolean_pipeline, ['phone_home_valid', 'phone_mobile_valid', 'foreign_request', 'keep_alive_session'])
+#     ],
+#     remainder='drop'
+# )
 
 # Feature Selection and Evaluation
 # ================================
@@ -138,3 +144,8 @@ def variance_threshold_test(X_scaled_nm):
     constant_features = [feature for feature in X_scaled_nm.columns if feature not in X_scaled_nm.columns[selector.get_support()]]
     print(constant_features)
     X_scaled_nm.drop(constant_features, axis=1, inplace=True)
+
+
+
+
+
