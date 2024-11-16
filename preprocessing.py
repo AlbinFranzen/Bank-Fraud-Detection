@@ -154,10 +154,19 @@ class OutlierRemoverTransformer(BaseEstimator, TransformerMixin):
             X.loc[outliers, col] = mean
         return X
 
-# Standard scaling transformer
-scaler_transformer = FunctionTransformer(
-    lambda X: pd.DataFrame(StandardScaler().fit_transform(X), columns=X.columns, index=X.index)
-)
+# Custom Transformer Class
+class ScalerTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        self.scaler = StandardScaler()
+
+    def fit(self, X, y=None):
+        self.scaler.fit(X)
+        return self
+
+    def transform(self, X):
+        scaled_data = self.scaler.transform(X)
+        return pd.DataFrame(scaled_data, columns=X.columns, index=X.index)
+
 # Combined Preprocessing Pipeline
 # ===============================
 preprocessor = Pipeline([
@@ -165,6 +174,6 @@ preprocessor = Pipeline([
     ('boolean_processing', BooleanTransformer()),
     ('low_card_categorical_processing', LowCardinalityTransformer()),
     ('high_card_categorical_processing', HighCardinalityTransformer()),
-    (('standard_scaler', scaler_transformer)),
+    ('standard_scaler', ScalerTransformer()),
     ('outlier_remover', OutlierRemoverTransformer(percentage=0.05))
 ])
