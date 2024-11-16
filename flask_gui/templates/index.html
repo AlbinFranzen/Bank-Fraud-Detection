@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Classification</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+
+</head>
+
+<body>
+    <h1>Bank Fraud Detection</h1>
+    <form method="POST" action="/predict">
+        <label for="fraud_bool">Fraud Bool:</label>
+        <input type="text" name="fraud_bool" id="fraud_bool" required>
+        <br>
+
+        <label for="income">Income:</label>
+        <input type="text" name="income" id="income" required>
+        <br>
+
+        <label for="name_email_similarity">Name Email Similarity:</label>
+        <input type="text" name="name_email_similarity" id="name_email_similarity" required>
+        <br>
+
+        <label for="prev_address_months_count">Previous Address Months Count:</label>
+        <input type="text" name="prev_address_months_count" id="prev_address_months_count" required>
+        <br>
+
+        <label for="current_address_months_count">Current Address Months Count:</label>
+        <input type="text" name="current_address_months_count" id="current_address_months_count" required>
+        <br>
+
+        <label for="customer_age">Customer Age:</label>
+        <input type="text" name="customer_age" id="customer_age" required>
+        <br>
+
+        <label for="days_since_request">Days Since Request:</label>
+        <input type="text" name="days_since_request" id="days_since_request" required>
+        <br>
+
+        <label for="intended_balcon_amount">Intended Balance Amount:</label>
+        <input type="text" name="intended_balcon_amount" id="intended_balcon_amount" required>
+        <br>
+
+        <label for="payment_type">Payment Type:</label>
+        <input type="text" name="payment_type" id="payment_type" required>
+        <br>
+
+        <label for="zip_count_4w">ZIP Count (4 Weeks):</label>
+        <input type="text" name="zip_count_4w" id="zip_count_4w" required>
+        <br>
+
+        <label for="velocity_6h">Velocity (6 Hours):</label>
+        <input type="text" name="velocity_6h" id="velocity_6h" required>
+        <br>
+
+        <label for="velocity_24h">Velocity (24 Hours):</label>
+        <input type="text" name="velocity_24h" id="velocity_24h" required>
+        <br>
+
+        <label for="velocity_4w">Velocity (4 Weeks):</label>
+        <input type="text" name="velocity_4w" id="velocity_4w" required>
+        <br>
+
+        <label for="bank_branch_count_8w">Bank Branch Count (8 Weeks):</label>
+        <input type="text" name="bank_branch_count_8w" id="bank_branch_count_8w" required>
+        <br>
+
+        <label for="date_of_birth_distinct_emails_4w">Date of Birth Distinct Emails (4 Weeks):</label>
+        <input type="text" name="date_of_birth_distinct_emails_4w" id="date_of_birth_distinct_emails_4w" required>
+        <br>
+
+        <label for="employment_status">Employment Status:</label>
+        <input type="text" name="employment_status" id="employment_status" required>
+        <br>
+
+        <label for="credit_risk_score">Credit Risk Score:</label>
+        <input type="text" name="credit_risk_score" id="credit_risk_score" required>
+        <br>
+
+        <label for="email_is_free">Email is Free:</label>
+        <input type="text" name="email_is_free" id="email_is_free" required>
+        <br>
+
+        <label for="housing_status">Housing Status:</label>
+        <input type="text" name="housing_status" id="housing_status" required>
+        <br>
+
+        <label for="phone_home_valid">Phone Home Valid:</label>
+        <input type="text" name="phone_home_valid" id="phone_home_valid" required>
+        <br>
+
+        <label for="phone_mobile_valid">Phone Mobile Valid:</label>
+        <input type="text" name="phone_mobile_valid" id="phone_mobile_valid" required>
+        <br>
+
+        <label for="bank_months_count">Bank Months Count:</label>
+        <input type="text" name="bank_months_count" id="bank_months_count" required>
+        <br>
+
+        <label for="has_other_cards">Has Other Cards:</label>
+        <input type="text" name="has_other_cards" id="has_other_cards" required>
+        <br>
+
+        <label for="proposed_credit_limit">Proposed Credit Limit:</label>
+        <input type="text" name="proposed_credit_limit" id="proposed_credit_limit" required>
+        <br>
+
+        <label for="foreign_request">Foreign Request:</label>
+        <input type="text" name="foreign_request" id="foreign_request" required>
+        <br>
+
+        <label for="source">Source:</label>
+        <input type="text" name="source" id="source" required>
+        <br>
+
+        <label for="session_length_in_minutes">Session Length (Minutes):</label>
+        <input type="text" name="session_length_in_minutes" id="session_length_in_minutes" required>
+        <br>
+
+        <label for="device_os">Device OS:</label>
+        <input type="text" name="device_os" id="device_os" required>
+        <br>
+
+        <label for="keep_alive_session">Keep Alive Session:</label>
+        <input type="text" name="keep_alive_session" id="keep_alive_session" required>
+        <br>
+
+        <label for="device_distinct_emails_8w">Device Distinct Emails (8 Weeks):</label>
+        <input type="text" name="device_distinct_emails_8w" id="device_distinct_emails_8w" required>
+        <br>
+
+        <label for="device_fraud_count">Device Fraud Count:</label>
+        <input type="text" name="device_fraud_count" id="device_fraud_count" required>
+        <br>
+
+        <label for="month">Month:</label>
+        <input type="text" name="month" id="month" required>
+        <br>
+
+        <button type="submit">Predict</button>
+    </form>
+</body>
+</html>
