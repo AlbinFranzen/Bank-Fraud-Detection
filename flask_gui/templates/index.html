@@ -3,145 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Machine Learning Classification</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet">
+    <title>Bank Fraud Detection</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
-
 </head>
-
 <body>
-    <h1>Bank Fraud Detection</h1>
-    <form method="POST" action="/predict">
-        <label for="fraud_bool">Fraud Bool:</label>
-        <input type="text" name="fraud_bool" id="fraud_bool" required>
-        <br>
+    <div class="container">
+        <form action="{{ url_for('predict') }}" method="post">
 
-        <label for="income">Income:</label>
-        <input type="text" name="income" id="income" required>
-        <br>
+            <div class="header-section">
+                <div class="little-text">ECS 171 - MACHINE LEARNING</div>
+                <div class="main-title">Bank Fraud Detection</div>
+                <button type="button" class="random-button random-all-button" onclick="generateAllRandomValues()">
+                    <img src="{{ url_for('static', filename='./icons/dice.svg') }}" class="button-icon">
+                    Generate All Random Values
+                </button>
+            </div>
+            <!-- Customer Information -->
+            <section class="form-section">
+                <div class="section-header">
+                    Customer Information
+                    <button type="button" class="random-button" onclick="generateRandomValues('customer-info')">
+                        <img src="{{ url_for('static', filename='./icons/dice.svg') }}" class="button-icon">
+                    </button>
+                </div>
+                <div class="form-grid" id="customer-info">
+                    <div class="form-group">
+                        <label for="customer_age">Customer Age</label>
+                        <input type="number" id="customer_age" name="customer_age" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="income">Income</label>
+                        <input type="number" id="income" name="income" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employment_status">Employment Status</label>
+                        <input type="text" id="employment_status" name="employment_status" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="credit_risk_score">Credit Risk Score</label>
+                        <input type="number" id="credit_risk_score" name="credit_risk_score" required>
+                    </div>
+                </div>
+            </section>
 
-        <label for="name_email_similarity">Name Email Similarity:</label>
-        <input type="text" name="name_email_similarity" id="name_email_similarity" required>
-        <br>
+            <!-- Address & Contact Information -->
+            <section class="form-section">
+                <div class="section-header">
+                    Address & Contact Information
+                    <button type="button" class="random-button" onclick="generateRandomValues('address-info')">
+                        <img src="{{ url_for('static', filename='./icons/dice.svg') }}" class="button-icon">
+                    </button>
+                </div>
+                <div class="form-grid" id="address-info">
+                    <div class="form-group">
+                        <label for="current_address_months_count">Current Address Duration (Months)</label>
+                        <input type="number" id="current_address_months_count" name="current_address_months_count" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prev_address_months_count">Previous Address Duration (Months)</label>
+                        <input type="number" id="prev_address_months_count" name="prev_address_months_count" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone_home_valid">Home Phone Valid</label>
+                        <input type="number" id="phone_home_valid" name="phone_home_valid" min="0" max="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone_mobile_valid">Mobile Phone Valid</label>
+                        <input type="number" id="phone_mobile_valid" name="phone_mobile_valid" min="0" max="1" required>
+                    </div>
+                </div>
+            </section>
 
-        <label for="prev_address_months_count">Previous Address Months Count:</label>
-        <input type="text" name="prev_address_months_count" id="prev_address_months_count" required>
-        <br>
+            <!-- Account Details -->
+            <section class="form-section">
+                <div class="section-header">
+                    Account Details
+                    <button type="button" class="random-button" onclick="generateRandomValues('account-details')">
+                        <img src="{{ url_for('static', filename='./icons/dice.svg') }}" class="button-icon">
+                    </button>
+                </div>
+                <div class="form-grid" id="account-details">
+                    <div class="form-group">
+                        <label for="intended_balcon_amount">Intended Balance Amount</label>
+                        <input type="number" id="intended_balcon_amount" name="intended_balcon_amount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="proposed_credit_limit">Proposed Credit Limit</label>
+                        <input type="number" id="proposed_credit_limit" name="proposed_credit_limit" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="has_other_cards">Has Other Cards</label>
+                        <input type="number" id="has_other_cards" name="has_other_cards" min="0" max="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bank_months_count">Bank Account Duration (Months)</label>
+                        <input type="number" id="bank_months_count" name="bank_months_count" required>
+                    </div>
+                </div>
+            </section>
 
-        <label for="current_address_months_count">Current Address Months Count:</label>
-        <input type="text" name="current_address_months_count" id="current_address_months_count" required>
-        <br>
+            <!-- Transaction Patterns -->
+            <section class="form-section">
+                <div class="section-header">
+                    Transaction Patterns
+                    <button type="button" class="random-button" onclick="generateRandomValues('transaction-patterns')">
+                        <img src="{{ url_for('static', filename='./icons/dice.svg') }}" class="button-icon">
+                    </button>
+                </div>
+                <div class="form-grid" id="transaction-patterns">
+                    <div class="form-group">
+                        <label for="velocity_6h">Velocity (6 Hours)</label>
+                        <input type="number" id="velocity_6h" name="velocity_6h" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="velocity_24h">Velocity (24 Hours)</label>
+                        <input type="number" id="velocity_24h" name="velocity_24h" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="velocity_4w">Velocity (4 Weeks)</label>
+                        <input type="number" id="velocity_4w" name="velocity_4w" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="zip_count_4w">ZIP Count (4 Weeks)</label>
+                        <input type="number" id="zip_count_4w" name="zip_count_4w" required>
+                    </div>
+                </div>
+            </section>
 
-        <label for="customer_age">Customer Age:</label>
-        <input type="text" name="customer_age" id="customer_age" required>
-        <br>
+            <!-- Digital Footprint -->
+            <section class="form-section">
+                <div class="section-header">
+                    Digital Footprint
+                    <button type="button" class="random-button" onclick="generateRandomValues('digital-footprint')">
+                        <img src="{{ url_for('static', filename='./icons/dice.svg') }}" class="button-icon">
+                    </button>
+                </div>
+                <div class="form-grid" id="digital-footprint">
+                    <div class="form-group">
+                        <label for="email_is_free">Email is Free</label>
+                        <input type="number" id="email_is_free" name="email_is_free" min="0" max="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name_email_similarity">Name-Email Similarity</label>
+                        <input type="number" id="name_email_similarity" name="name_email_similarity" min="0" max="1" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="device_os">Device OS</label>
+                        <input type="text" id="device_os" name="device_os" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="device_fraud_count">Device Fraud Count</label>
+                        <input type="number" id="device_fraud_count" name="device_fraud_count" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="session_length_in_minutes">Session Length (Minutes)</label>
+                        <input type="number" id="session_length_in_minutes" name="session_length_in_minutes" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="keep_alive_session">Keep Alive Session</label>
+                        <input type="number" id="keep_alive_session" name="keep_alive_session" min="0" max="1" required>
+                    </div>
+                </div>
+            </section>
 
-        <label for="days_since_request">Days Since Request:</label>
-        <input type="text" name="days_since_request" id="days_since_request" required>
-        <br>
+            <!-- Other Details -->
+            <section class="form-section">
+                <div class="section-header">
+                    Other Details
+                    <button type="button" class="random-button" onclick="generateRandomValues('other-details')">
+                        <img src="{{ url_for('static', filename='./icons/dice.svg') }}" class="button-icon">
+                    </button>
+                </div>
+                <div class="form-grid" id="other-details">
+                    <div class="form-group">
+                        <label for="fraud_bool">Fraud Bool</label>
+                        <input type="number" id="fraud_bool" name="fraud_bool" min="0" max="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="foreign_request">Foreign Request</label>
+                        <input type="number" id="foreign_request" name="foreign_request" min="0" max="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="month">Month</label>
+                        <input type="number" id="month" name="month" min="1" max="12" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="source">Source</label>
+                        <input type="text" id="source" name="source" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="source">Days Since Request</label>
+                        <input type="text" id="days_since_request" name="days_since_request" required>
+                    </div>
+                </div>
+            </section>
 
-        <label for="intended_balcon_amount">Intended Balance Amount:</label>
-        <input type="text" name="intended_balcon_amount" id="intended_balcon_amount" required>
-        <br>
+            <button type="submit">Predict Fraud Risk</button>
+        </form>
+    </div>
 
-        <label for="payment_type">Payment Type:</label>
-        <input type="text" name="payment_type" id="payment_type" required>
-        <br>
+    <script>
+        // Random value generation ranges for each field type
+        const fieldRanges = {
+            customer_age: { min: 18, max: 80 },
+            income: { min: 20000, max: 200000 },
+            credit_risk_score: { min: 300, max: 850 },
+            current_address_months_count: { min: 0, max: 240 },
+            prev_address_months_count: { min: 0, max: 240 },
+            phone_home_valid: { min: 0, max: 1 },
+            phone_mobile_valid: { min: 0, max: 1 },
+            intended_balcon_amount: { min: 1000, max: 50000 },
+            proposed_credit_limit: { min: 1000, max: 50000 },
+            has_other_cards: { min: 0, max: 1 },
+            bank_months_count: { min: 0, max: 240 },
+            velocity_6h: { min: 0, max: 100 },
+            velocity_24h: { min: 0, max: 200 },
+            velocity_4w: { min: 0, max: 500 },
+            zip_count_4w: { min: 1, max: 10 },
+            email_is_free: { min: 0, max: 1 },
+            name_email_similarity: { min: 0, max: 1 },
+            device_fraud_count: { min: 0, max: 10 },
+            session_length_in_minutes: { min: 1, max: 120 },
+            keep_alive_session: { min: 0, max: 1 },
+            fraud_bool: { min: 0, max: 1 },
+            foreign_request: { min: 0, max: 1 },
+            month: { min: 1, max: 12 },
+            days_since_request: { min: 1, max: 10000}
+        };
 
-        <label for="zip_count_4w">ZIP Count (4 Weeks):</label>
-        <input type="text" name="zip_count_4w" id="zip_count_4w" required>
-        <br>
+        // Employment status options
+        const employmentStatuses = ['Employed', 'Self-Employed', 'Unemployed', 'Retired', 'Student'];
+        
+        // Device OS options
+        const deviceOSs = ['Windows', 'MacOS', 'Linux', 'iOS', 'Android'];
+        
+        // Source options
+        const sources = ['Web', 'Mobile App', 'Branch', 'Phone', 'Mail'];
 
-        <label for="velocity_6h">Velocity (6 Hours):</label>
-        <input type="text" name="velocity_6h" id="velocity_6h" required>
-        <br>
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
 
-        <label for="velocity_24h">Velocity (24 Hours):</label>
-        <input type="text" name="velocity_24h" id="velocity_24h" required>
-        <br>
+        function getRandomFloat(min, max) {
+            return (Math.random() * (max - min) + min).toFixed(2);
+        }
 
-        <label for="velocity_4w">Velocity (4 Weeks):</label>
-        <input type="text" name="velocity_4w" id="velocity_4w" required>
-        <br>
+        function generateRandomValue(field) {
+            if (field.id === 'employment_status') {
+                return employmentStatuses[Math.floor(Math.random() * employmentStatuses.length)];
+            } else if (field.id === 'device_os') {
+                return deviceOSs[Math.floor(Math.random() * deviceOSs.length)];
+            } else if (field.id === 'source') {
+                return sources[Math.floor(Math.random() * sources.length)];
+            }
 
-        <label for="bank_branch_count_8w">Bank Branch Count (8 Weeks):</label>
-        <input type="text" name="bank_branch_count_8w" id="bank_branch_count_8w" required>
-        <br>
+            const range = fieldRanges[field.id];
+            if (!range) return '';
 
-        <label for="date_of_birth_distinct_emails_4w">Date of Birth Distinct Emails (4 Weeks):</label>
-        <input type="text" name="date_of_birth_distinct_emails_4w" id="date_of_birth_distinct_emails_4w" required>
-        <br>
+            if (field.id === 'name_email_similarity') {
+                return getRandomFloat(range.min, range.max);
+            }
+            
+            return getRandomNumber(range.min, range.max);
+        }
 
-        <label for="employment_status">Employment Status:</label>
-        <input type="text" name="employment_status" id="employment_status" required>
-        <br>
+        function generateRandomValues(sectionId) {
+            const section = document.getElementById(sectionId);
+            const inputs = section.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.value = generateRandomValue(input);
+            });
+        }
 
-        <label for="credit_risk_score">Credit Risk Score:</label>
-        <input type="text" name="credit_risk_score" id="credit_risk_score" required>
-        <br>
-
-        <label for="email_is_free">Email is Free:</label>
-        <input type="text" name="email_is_free" id="email_is_free" required>
-        <br>
-
-        <label for="housing_status">Housing Status:</label>
-        <input type="text" name="housing_status" id="housing_status" required>
-        <br>
-
-        <label for="phone_home_valid">Phone Home Valid:</label>
-        <input type="text" name="phone_home_valid" id="phone_home_valid" required>
-        <br>
-
-        <label for="phone_mobile_valid">Phone Mobile Valid:</label>
-        <input type="text" name="phone_mobile_valid" id="phone_mobile_valid" required>
-        <br>
-
-        <label for="bank_months_count">Bank Months Count:</label>
-        <input type="text" name="bank_months_count" id="bank_months_count" required>
-        <br>
-
-        <label for="has_other_cards">Has Other Cards:</label>
-        <input type="text" name="has_other_cards" id="has_other_cards" required>
-        <br>
-
-        <label for="proposed_credit_limit">Proposed Credit Limit:</label>
-        <input type="text" name="proposed_credit_limit" id="proposed_credit_limit" required>
-        <br>
-
-        <label for="foreign_request">Foreign Request:</label>
-        <input type="text" name="foreign_request" id="foreign_request" required>
-        <br>
-
-        <label for="source">Source:</label>
-        <input type="text" name="source" id="source" required>
-        <br>
-
-        <label for="session_length_in_minutes">Session Length (Minutes):</label>
-        <input type="text" name="session_length_in_minutes" id="session_length_in_minutes" required>
-        <br>
-
-        <label for="device_os">Device OS:</label>
-        <input type="text" name="device_os" id="device_os" required>
-        <br>
-
-        <label for="keep_alive_session">Keep Alive Session:</label>
-        <input type="text" name="keep_alive_session" id="keep_alive_session" required>
-        <br>
-
-        <label for="device_distinct_emails_8w">Device Distinct Emails (8 Weeks):</label>
-        <input type="text" name="device_distinct_emails_8w" id="device_distinct_emails_8w" required>
-        <br>
-
-        <label for="device_fraud_count">Device Fraud Count:</label>
-        <input type="text" name="device_fraud_count" id="device_fraud_count" required>
-        <br>
-
-        <label for="month">Month:</label>
-        <input type="text" name="month" id="month" required>
-        <br>
-
-        <button type="submit">Predict</button>
-    </form>
+        function generateAllRandomValues() {
+            const allInputs = document.querySelectorAll('input');
+            allInputs.forEach(input => {
+                input.value = generateRandomValue(input);
+            });
+        }
+    </script>
 </body>
 </html>
