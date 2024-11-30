@@ -9,7 +9,6 @@
 <body>
     <div class="container">
         <form action="{{ url_for('predict') }}" method="post">
-
             <div class="header-section">
                 <div class="little-text">ECS 171 - MACHINE LEARNING</div>
                 <div class="main-title">Bank Fraud Detection</div>
@@ -18,6 +17,7 @@
                     Generate All Random Values
                 </button>
             </div>
+
             <!-- Customer Information -->
             <section class="form-section">
                 <div class="section-header">
@@ -42,6 +42,14 @@
                     <div class="form-group">
                         <label for="credit_risk_score">Credit Risk Score</label>
                         <input type="number" id="credit_risk_score" name="credit_risk_score" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="housing_status">Housing Status</label>
+                        <input type="text" id="housing_status" name="housing_status" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment_type">Payment Type</label>
+                        <input type="text" id="payment_type" name="payment_type" required>
                     </div>
                 </div>
             </section>
@@ -98,6 +106,10 @@
                     <div class="form-group">
                         <label for="bank_months_count">Bank Account Duration (Months)</label>
                         <input type="number" id="bank_months_count" name="bank_months_count" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bank_branch_count_8w">Bank Branch Count (8 Weeks)</label>
+                        <input type="number" id="bank_branch_count_8w" name="bank_branch_count_8w" required>
                     </div>
                 </div>
             </section>
@@ -156,6 +168,14 @@
                         <input type="number" id="device_fraud_count" name="device_fraud_count" min="0" required>
                     </div>
                     <div class="form-group">
+                        <label for="device_distinct_emails_8w">Device Distinct Emails (8 Weeks)</label>
+                        <input type="number" id="device_distinct_emails_8w" name="device_distinct_emails_8w" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_of_birth_distinct_emails_4w">DOB Distinct Emails (4 Weeks)</label>
+                        <input type="number" id="date_of_birth_distinct_emails_4w" name="date_of_birth_distinct_emails_4w" min="0" required>
+                    </div>
+                    <div class="form-group">
                         <label for="session_length_in_minutes">Session Length (Minutes)</label>
                         <input type="number" id="session_length_in_minutes" name="session_length_in_minutes" min="0" required>
                     </div>
@@ -192,8 +212,8 @@
                         <input type="text" id="source" name="source" required>
                     </div>
                     <div class="form-group">
-                        <label for="source">Days Since Request</label>
-                        <input type="text" id="days_since_request" name="days_since_request" required>
+                        <label for="days_since_request">Days Since Request</label>
+                        <input type="number" id="days_since_request" name="days_since_request" required>
                     </div>
                 </div>
             </section>
@@ -223,22 +243,31 @@
             email_is_free: { min: 0, max: 1 },
             name_email_similarity: { min: 0, max: 1 },
             device_fraud_count: { min: 0, max: 10 },
+            device_distinct_emails_8w: { min: 0, max: 50 },
+            date_of_birth_distinct_emails_4w: { min: 0, max: 20 },
+            bank_branch_count_8w: { min: 1, max: 20 },
             session_length_in_minutes: { min: 1, max: 120 },
             keep_alive_session: { min: 0, max: 1 },
             fraud_bool: { min: 0, max: 1 },
             foreign_request: { min: 0, max: 1 },
             month: { min: 1, max: 12 },
-            days_since_request: { min: 1, max: 10000}
+            days_since_request: { min: 1, max: 10000 }
         };
 
         // Employment status options
-        const employmentStatuses = ['Employed', 'Self-Employed', 'Unemployed', 'Retired', 'Student'];
+        const employmentStatuses = ['Employed', 'Self-Employed', 'Unemployed', 'Retired', 'Student', 'Other', 'Unknown'];
+        
+        // Housing status options
+        const housingStatuses = ['Own', 'Rent', 'Living with Parents', 'Other', 'Unknown', 'Temporary', 'Homeless'];
+
+        // Payment type options
+        const paymentTypes = ['Type1', 'Type2', 'Type3', 'Type4', 'Type5'];
         
         // Device OS options
-        const deviceOSs = ['Windows', 'MacOS', 'Linux', 'iOS', 'Android'];
+        const deviceOSs = ['Windows', 'macOS', 'Linux', 'X11', 'Other'];
         
         // Source options
-        const sources = ['Web', 'Mobile App', 'Branch', 'Phone', 'Mail'];
+        const sources = ['INTERNET', 'TELEAPP'];
 
         function getRandomNumber(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -248,39 +277,105 @@
             return (Math.random() * (max - min) + min).toFixed(2);
         }
 
-        function generateRandomValue(field) {
-            if (field.id === 'employment_status') {
-                return employmentStatuses[Math.floor(Math.random() * employmentStatuses.length)];
-            } else if (field.id === 'device_os') {
-                return deviceOSs[Math.floor(Math.random() * deviceOSs.length)];
-            } else if (field.id === 'source') {
-                return sources[Math.floor(Math.random() * sources.length)];
-            }
+        function getRandomEmploymentStatus() {
+            const index = getRandomNumber(0, employmentStatuses.length - 1);
+            return employmentStatuses[index];
+        }
 
-            const range = fieldRanges[field.id];
-            if (!range) return '';
+        function getRandomHousingStatus() {
+            const index = getRandomNumber(0, housingStatuses.length - 1);
+            return housingStatuses[index];
+        }
 
-            if (field.id === 'name_email_similarity') {
-                return getRandomFloat(range.min, range.max);
-            }
-            
-            return getRandomNumber(range.min, range.max);
+        function getRandomPaymentType() {
+            const index = getRandomNumber(0, paymentTypes.length - 1);
+            return paymentTypes[index];
+        }
+
+        function getRandomSource() {
+            const index = getRandomNumber(0, sources.length - 1);
+            return sources[index];
+        }
+
+        function getRandomDeviceOS() {
+            const index = getRandomNumber(0, deviceOSs.length - 1);
+            return deviceOSs[index];
         }
 
         function generateRandomValues(sectionId) {
             const section = document.getElementById(sectionId);
             const inputs = section.querySelectorAll('input');
+        
+            // Generate random values for each input in the section
             inputs.forEach(input => {
-                input.value = generateRandomValue(input);
+                if (input.id === 'employment_status') {
+                    input.value = getRandomEmploymentStatus();
+                } else if (input.id === 'housing_status') {
+                    input.value = getRandomHousingStatus();
+                } else if (input.id === 'payment_type') {
+                    input.value = getRandomPaymentType();
+                } else if (input.id === 'device_os') {
+                    input.value = getRandomDeviceOS();
+                } else if (input.id === 'source') {
+                    input.value = getRandomSource();
+                } else if (input.id === 'name_email_similarity') {
+                    input.value = getRandomFloat(0, 1);
+                } else if (input.id in fieldRanges) {
+                    const range = fieldRanges[input.id];
+                    input.value = getRandomNumber(range.min, range.max);
+                }
             });
         }
 
         function generateAllRandomValues() {
-            const allInputs = document.querySelectorAll('input');
-            allInputs.forEach(input => {
-                input.value = generateRandomValue(input);
-            });
+            // Customer Information
+            document.getElementById('customer_age').value = getRandomNumber(10, 90);
+            document.getElementById('income').value = getRandomFloat(0.1, 0.9);
+            document.getElementById('employment_status').value = getRandomEmploymentStatus();
+            document.getElementById('credit_risk_score').value = getRandomNumber(-191, 389);
+            document.getElementById('housing_status').value = getRandomHousingStatus();
+            document.getElementById('payment_type').value = getRandomPaymentType();
+
+            // Address & Contact Information
+            document.getElementById('current_address_months_count').value = getRandomNumber(-1, 429);
+            document.getElementById('prev_address_months_count').value = getRandomNumber(-1, 380);
+            document.getElementById('phone_home_valid').value = getRandomNumber(0, 1);
+            document.getElementById('phone_mobile_valid').value = getRandomNumber(0, 1);
+
+            // Account Details
+            document.getElementById('intended_balcon_amount').value = getRandomNumber(-16, 114);
+            document.getElementById('proposed_credit_limit').value = getRandomNumber(200, 2000);
+            document.getElementById('has_other_cards').value = getRandomNumber(0, 1);
+            document.getElementById('bank_months_count').value = getRandomNumber(-1, 32);
+            document.getElementById('bank_branch_count_8w').value = getRandomNumber(0, 2404);
+
+            // Transaction Patterns
+            document.getElementById('velocity_6h').value = getRandomNumber(-175, 16818);
+            document.getElementById('velocity_24h').value = getRandomNumber(1297, 9586);
+            document.getElementById('velocity_4w').value = getRandomNumber(2825, 7020);
+            document.getElementById('zip_count_4w').value = getRandomNumber(1, 6830);
+
+            // Digital Footprint
+            document.getElementById('email_is_free').value = getRandomNumber(0, 1);
+            document.getElementById('name_email_similarity').value = getRandomFloat(0, 1);
+            document.getElementById('device_os').value = getRandomDeviceOS();
+            document.getElementById('device_fraud_count').value = getRandomNumber(0, 1);
+            document.getElementById('device_distinct_emails_8w').value = getRandomNumber(-1, 2);
+            document.getElementById('date_of_birth_distinct_emails_4w').value = getRandomNumber(0, 39);
+            document.getElementById('session_length_in_minutes').value = getRandomNumber(-1, 107);
+            document.getElementById('keep_alive_session').value = getRandomNumber(0, 1);
+
+            // Other Details
+            document.getElementById('fraud_bool').value = getRandomNumber(0, 1);
+            document.getElementById('foreign_request').value = getRandomNumber(0, 1);
+            document.getElementById('month').value = getRandomNumber(0, 7);
+            document.getElementById('source').value = getRandomSource();
+            document.getElementById('days_since_request').value = getRandomNumber(0, 79);
         }
+
+        // Example usage
+        console.log(getRandomEmploymentStatus());
+        console.log(getRandomHousingStatus());
     </script>
 </body>
 </html>
