@@ -28,13 +28,13 @@ class NumericalTransformer(BaseEstimator, TransformerMixin):
         X = X.copy()
         
         # Drop specified columns
-        X.drop(columns=['velocity_4w', 'session_length_in_minutes'], inplace=True)
+        # X.drop(columns=['velocity_4w', 'session_length_in_minutes'], inplace=True)
         
         # Process 'name_email_similarity'
         X['name_email_similarity_binned'] = pd.cut( X['name_email_similarity'],
             bins=[0.0, 0.24, 0.48, 0.72, 0.96, 1.0],
             labels=[0, 1, 2, 3, 4]).astype(int)
-        X.drop(columns=['name_email_similarity'], inplace=True)
+        # X.drop(columns=['name_email_similarity'], inplace=True)
         
         # Log transform 'days_since_request'
         X['days_since_request'] = np.log1p(X['days_since_request'])
