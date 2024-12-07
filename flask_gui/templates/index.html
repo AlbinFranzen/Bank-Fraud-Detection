@@ -93,7 +93,7 @@
                 <div class="form-grid" id="account-details">
                     <div class="form-group">
                         <label for="intended_balcon_amount">Intended Balance Amount</label>
-                        <input type="number" id="intended_balcon_amount" name="intended_balcon_amount" min="-1000" max="1000" step="0.00000001" required>
+                        <input type="number" id="intended_balcon_amount" name="intended_balcon_amount" min="-1000" max="1000" step="0.000000001" required>
                     </div>
                     <div class="form-group">
                         <label for="proposed_credit_limit">Proposed Credit Limit</label>
@@ -157,7 +157,7 @@
                     </div>
                     <div class="form-group">
                         <label for="name_email_similarity">Name-Email Similarity</label>
-                        <input type="number" id="name_email_similarity" name="name_email_similarity" min="0" max="1" step="0.00000001" required>
+                        <input type="number" id="name_email_similarity" name="name_email_similarity" min="0" max="1" step="0.000000001" required>
                     </div>
                     <div class="form-group">
                         <label for="device_os">Device OS</label>
@@ -177,7 +177,7 @@
                     </div>
                     <div class="form-group">
                         <label for="session_length_in_minutes">Session Length (Minutes)</label>
-                        <input type="number" id="session_length_in_minutes" name="session_length_in_minutes" min="0" required>
+                        <input type="number" id="session_length_in_minutes" name="session_length_in_minutes" min="0" step="0.0000000001"required>
                     </div>
                     <div class="form-group">
                         <label for="keep_alive_session">Keep Alive Session</label>
@@ -228,7 +228,7 @@
             prev_address_months_count: { min: 0, max: 240 },
             phone_home_valid: { min: 0, max: 1 },
             phone_mobile_valid: { min: 0, max: 1 },
-            intended_balcon_amount: { min: 1000, max: 50000 },
+            intended_balcon_amount: { min: -1000, max: 1000 },
             proposed_credit_limit: { min: 1000, max: 50000 },
             has_other_cards: { min: 0, max: 1 },
             bank_months_count: { min: 0, max: 240 },
@@ -324,7 +324,7 @@
                 } else if (input.id === 'name_email_similarity') {
                     input.value = getRandomFloat(0, 1);
                 } else if (input.id === 'income') {
-                        input.value = getRandomincomeStatus();
+                    input.value = getRandomIncomeStatus();
                 } else if (input.id in fieldRanges) {
                     const range = fieldRanges[input.id];
                     input.value = getRandomNumber(range.min, range.max);
