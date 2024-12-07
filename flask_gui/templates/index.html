@@ -33,7 +33,7 @@
                     </div>
                     <div class="form-group">
                         <label for="income">Income</label>
-                        <input type="number" id="income" name="income" required>
+                        <input type="number" id="income" name="income" min="0.1" max="0.9" step="0.1" required>
                     </div>
                     <div class="form-group">
                         <label for="employment_status">Employment Status</label>
@@ -205,7 +205,7 @@
                     </div>
                     <div class="form-group">
                         <label for="month">Month</label>
-                        <input type="number" id="month" name="month" min="1" max="12" required>
+                        <input type="number" id="month" name="month" min="0" max="8" required>
                     </div>
                     <div class="form-group">
                         <label for="source">Source</label>
@@ -226,7 +226,7 @@
         // Random value generation ranges for each field type
         const fieldRanges = {
             customer_age: { min: 18, max: 80 },
-            income: { min: 20000, max: 200000 },
+            income: { min: 0.1, max: 0.9},
             credit_risk_score: { min: 300, max: 850 },
             current_address_months_count: { min: 0, max: 240 },
             prev_address_months_count: { min: 0, max: 240 },
@@ -250,7 +250,7 @@
             keep_alive_session: { min: 0, max: 1 },
             fraud_bool: { min: 0, max: 1 },
             foreign_request: { min: 0, max: 1 },
-            month: { min: 1, max: 12 },
+            month: { min: 0, max: 7},
             days_since_request: { min: 1, max: 10000 }
         };
 
@@ -261,7 +261,7 @@
         const housingStatuses = ['Own', 'Rent', 'Living with Parents', 'Other', 'Unknown', 'Temporary', 'Homeless'];
 
         // Payment type options
-        const paymentTypes = ['Type1', 'Type2', 'Type3', 'Type4', 'Type5'];
+        const paymentTypes = ['AA', 'AB', 'AC', 'AD', 'AE'];
         
         // Device OS options
         const deviceOSs = ['Windows', 'macOS', 'Linux', 'X11', 'Other'];
@@ -330,7 +330,7 @@
         function generateAllRandomValues() {
             // Customer Information
             document.getElementById('customer_age').value = getRandomNumber(10, 90);
-            document.getElementById('income').value = getRandomFloat(0.1, 0.9);
+            document.getElementById('income').value = (0.1 + 0.1 * Math.floor(Math.random() * 9)).toFixed(1);
             document.getElementById('employment_status').value = getRandomEmploymentStatus();
             document.getElementById('credit_risk_score').value = getRandomNumber(-191, 389);
             document.getElementById('housing_status').value = getRandomHousingStatus();
@@ -360,9 +360,9 @@
             document.getElementById('name_email_similarity').value = getRandomFloat(0, 1);
             document.getElementById('device_os').value = getRandomDeviceOS();
             document.getElementById('device_fraud_count').value = getRandomNumber(0, 1);
-            document.getElementById('device_distinct_emails_8w').value = getRandomNumber(-1, 2);
+            document.getElementById('device_distinct_emails_8w').value = getRandomNumber(0, 2);
             document.getElementById('date_of_birth_distinct_emails_4w').value = getRandomNumber(0, 39);
-            document.getElementById('session_length_in_minutes').value = getRandomNumber(-1, 107);
+            document.getElementById('session_length_in_minutes').value = getRandomNumber(0, 107);
             document.getElementById('keep_alive_session').value = getRandomNumber(0, 1);
 
             // Other Details
