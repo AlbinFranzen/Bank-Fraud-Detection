@@ -30,7 +30,11 @@
 <body>
     <div class="container">
         <h1>Prediction Result</h1>
-        <p class="result">The predicted class for the given inputs is: <strong>{{ prediction }}</strong></p>
+        {% if prediction == 0 %}
+            <p class="result">This bank account application was <strong style="color: #28a745;">not fraudulent</strong>.</p>
+        {% else %}
+            <p class="result">This bank account application was <strong style="color: #d9534f;">fraudulent</strong>.</p>
+        {% endif %}
         <a href="/">Make another prediction</a>
     </div>
 </body>

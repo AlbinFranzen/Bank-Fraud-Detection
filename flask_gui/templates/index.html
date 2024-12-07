@@ -246,7 +246,7 @@
             keep_alive_session: { min: 0, max: 1 },
             fraud_bool: { min: 0, max: 1 },
             foreign_request: { min: 0, max: 1 },
-            month: { min: 1, max: 12 },
+            month: { min: 0, max: 7},
             days_since_request: { min: 1, max: 10000 }
         };
         //income options
@@ -259,6 +259,7 @@
         const housingStatuses = ['BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG'];
 
         // Payment type options
+        const paymentTypes = ['AA', 'AB', 'AC', 'AD', 'AE'];
         const paymentTypes = ['AA', 'AB', 'AC', 'AD', 'AE'];
         
         // Device OS options
@@ -365,9 +366,9 @@
             document.getElementById('name_email_similarity').value = getRandomFloat(0, 1);
             document.getElementById('device_os').value = getRandomDeviceOS();
             document.getElementById('device_fraud_count').value = getRandomNumber(0, 1);
-            document.getElementById('device_distinct_emails_8w').value = getRandomNumber(-1, 2);
+            document.getElementById('device_distinct_emails_8w').value = getRandomNumber(0, 2);
             document.getElementById('date_of_birth_distinct_emails_4w').value = getRandomNumber(0, 39);
-            document.getElementById('session_length_in_minutes').value = getRandomNumber(-1, 107);
+            document.getElementById('session_length_in_minutes').value = getRandomNumber(0, 107);
             document.getElementById('keep_alive_session').value = getRandomNumber(0, 1);
 
             // Other Details
