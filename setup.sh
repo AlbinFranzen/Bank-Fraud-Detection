@@ -48,6 +48,6 @@ wget "https://drive.usercontent.google.com/download?id=1gDHsL7iJsXjvkIY1VLb5IwlJ
 
 # Step 8: Final message
 echo "Setup complete!"
-echo "Virtual environment is still active. Run 'deactivate' to exit."
-echo "To reactivate the virtual environment later, run:"
+echo "To activate the virtual environment, run:"
 echo "source bank/bin/activate"
+echo "To deactivate the virtual environment later, run 'deactivate' to exit."
