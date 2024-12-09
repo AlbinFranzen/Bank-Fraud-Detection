@@ -44,7 +44,7 @@ fi
 
 # Step 7: Download the dataset with wget
 echo "Downloading dataset from Google Drive..."
-wget "https://drive.usercontent.google.com/download?id=1gDHsL7iJsXjvkIY1VLb5IwlJ6AD236ic&authuser=0" -O Data/Base.csv || { echo "Failed to download dataset. Please check the link."; exit 1; }
+wget "https://drive.usercontent.google.com/download?id=1gDHsL7iJsXjvkIY1VLb5IwlJ6AD236ic&export=download&confirm=t" -O Data/Base.csv || { echo "Failed to download dataset. Please check the link."; exit 1; }
 
 # Step 8: Final message
 echo "Setup complete!"
