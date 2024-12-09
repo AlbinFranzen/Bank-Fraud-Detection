@@ -175,5 +175,5 @@ preprocessor = Pipeline([
     ('low_card_categorical_processing', LowCardinalityTransformer()),
     ('high_card_categorical_processing', HighCardinalityTransformer()),
     ('standard_scaler', ScalerTransformer()),
-    ('outlier_remover', OutlierRemoverTransformer(percentage=0.05))
+    ('outlier_remover', OutlierRemoverTransformer(percentage=0.05)),
 ])
