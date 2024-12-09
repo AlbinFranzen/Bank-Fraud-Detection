@@ -50,7 +50,7 @@ fi
 
 # Step 8: Use `gofile-dl` to download the dataset
 echo "Downloading dataset from Gofile..."
-gofile-dl "https://gofile.io/d/70APEq" --output-dir Base/ || { echo "Failed to download dataset. Please check the link."; exit 1; }
+gofile-dl --output-dir Base/ --verbose "https://gofile.io/d/70APEq" || { echo "Failed to download dataset. Please check the link."; exit 1; }
 
 # Step 9: Final message
 echo "Setup complete!"
