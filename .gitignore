@@ -5,3 +5,4 @@
 /model_development/__pycache__
 /model_development/saved_models
 /model_development/search_results
+model_development/search_results.joblib
