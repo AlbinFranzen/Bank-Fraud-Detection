@@ -42,17 +42,11 @@ else
     echo "No requirements.txt found, skipping dependency installation."
 fi
 
-# Step 7: Install `gofile-dl` if not installed
-if ! command -v gofile-dl &> /dev/null; then
-    echo "Installing gofile-dl..."
-    pip install gofile-dl
-fi
+# Step 7: Download the dataset with wget
+echo "Downloading dataset from Google Drive..."
+wget "https://drive.usercontent.google.com/download?id=1gDHsL7iJsXjvkIY1VLb5IwlJ6AD236ic&authuser=0" -O Date/Base.csv || { echo "Failed to download dataset. Please check the link."; exit 1; }
 
-# Step 8: Use `gofile-dl` to download the dataset
-echo "Downloading dataset from Gofile..."
-gofile-dl --output-dir Base/ --verbose "https://gofile.io/d/70APEq" || { echo "Failed to download dataset. Please check the link."; exit 1; }
-
-# Step 9: Final message
+# Step 8: Final message
 echo "Setup complete!"
 echo "Virtual environment is still active. Run 'deactivate' to exit."
 echo "To reactivate the virtual environment later, run:"
