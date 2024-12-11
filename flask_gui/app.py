@@ -1,8 +1,12 @@
-from flask import Flask, render_template, request
-import joblib  # To load the trained machine learning model
-import jsonify
+from flask import Flask, render_template, request, jsonify
+import joblib
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import io
+import base64
+from sklearn.metrics import roc_curve, auc
+
 def recall_at_fpr(y_true, y_scores, target_fpr):
     from sklearn.metrics import roc_curve
     fpr, tpr, thresholds = roc_curve(y_true, y_scores)
@@ -21,7 +25,7 @@ except FileNotFoundError:
 app = Flask(__name__)
 
 # Load the pre-trained machine learning model
-model = joblib.load("./flask_gui/gradb.joblib")
+model = joblib.load("./flask_gui/best_xgb_model.joblib")
 
 @app.route("/")
 def index():
@@ -107,35 +111,57 @@ def convert_features(request, feature_types):
 
 
 
+import shap
+from sklearn.metrics import roc_auc_score, roc_curve
 @app.route("/predict", methods=["POST"])
 def predict():
     if request.method == "POST":
         try:
-            # Convert and encode features
+            # Convert form data to DataFrame
             error, input_df = convert_features(request, feature_types)
-            
             if error:
-                return jsonify({"error": error}), 400  # Return a JSON response with the error
+                return jsonify({"error": error}), 400
             
-            # Make prediction using your trained model
-            print(model)
+            # Preprocess input
             processed_input = preprocess_pipeline.transform(input_df)
-            prediction = model.predict(processed_input)
-            predicted_class = prediction[0]
+            probabilities = model.predict_proba(processed_input)[0]
             
-            # Optionally, map the predicted class to a human-readable label
-            # For example:
-            # class_mapping = {0: "Not Fraud", 1: "Fraud"}
-            # predicted_label = class_mapping.get(predicted_class, "Unknown")
-            
-            return render_template("result.html", prediction=predicted_class)  # Or use jsonify if API
-            # Example using jsonify:
-            # return jsonify({"prediction": predicted_class}), 200
+            # Predicted class and confidence
+            predicted_class = np.argmax(probabilities)
+
+            # Generate SHAP values
+            explainer = shap.TreeExplainer(model)
+            shap_values = explainer.shap_values(processed_input)
+
+            # Handle binary classification SHAP values
+            if isinstance(shap_values, list):
+                shap_values = shap_values[1]
+
+            # Generate SHAP Summary Plot
+            plt.figure()  # Create a new figure for SHAP
+            shap.summary_plot(shap_values, processed_input, max_display=processed_input.shape[1])
+
+            buf = io.BytesIO()
+            plt.savefig(buf, format='png')
+            buf.seek(0)
+            shap_plot_url = base64.b64encode(buf.getvalue()).decode('utf8')
+            buf.close()
+            plt.close()  # Close the SHAP figure
+
+            # Render results
+            return render_template(
+                "result.html", 
+                prediction=predicted_class,
+                shap_plot=shap_plot_url
+            )
         
+        except ValueError as ve:
+            return jsonify({"error": f"ValueError: {str(ve)}"}), 400
         except Exception as e:
-            return jsonify({"error": f"An error occurred: {str(e)}"}), 500  # Return a JSON response with the error
+            return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
-    return jsonify({"error": "Invalid request method."}), 405  # Method Not Allowed
+    return jsonify({"error": "Invalid request method."}), 405
+
 
 
 if __name__ == "__main__":

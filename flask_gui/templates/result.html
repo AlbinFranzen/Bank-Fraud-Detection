@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,17 +26,47 @@
         a:hover {
             background-color: #0056b3;
         }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .graph-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .graph-container img {
+            max-width: 100%;
+            height: auto;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Prediction Result</h1>
         {% if prediction == 0 %}
-            <p class="result">This bank account application was <strong style="color: #28a745;">not fraudulent</strong>.</p>
+        <p class="result">This bank account application was <strong style="color: #28a745;">not fraudulent</strong>.</p>
         {% else %}
-            <p class="result">This bank account application was <strong style="color: #d9534f;">fraudulent</strong>.</p>
+        <p class="result">This bank account application was <strong style="color: #d9534f;">fraudulent</strong>.</p>
         {% endif %}
+
+        <div class="graph-container">
+            <h2>SHAP Feature Importance</h2>
+            <img src="data:image/png;base64,{{ shap_plot }}" alt="SHAP Plot">
+        </div>
+
         <a href="/">Make another prediction</a>
     </div>
 </body>
+
 </html>

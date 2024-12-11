@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bank Fraud Detection</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body>
     <div class="container">
         <form action="{{ url_for('predict') }}" method="post">
@@ -33,7 +35,7 @@
                     </div>
                     <div class="form-group">
                         <label for="income">Income</label>
-                        <input type="number" id="income" name="income" min="0" max="1" step="0.1"required>
+                        <input type="number" id="income" name="income" min="0" max="1" step="0.1" required>
                     </div>
                     <div class="form-group">
                         <label for="employment_status">Employment Status</label>
@@ -65,7 +67,8 @@
                 <div class="form-grid" id="address-info">
                     <div class="form-group">
                         <label for="current_address_months_count">Current Address Duration (Months)</label>
-                        <input type="number" id="current_address_months_count" name="current_address_months_count" required>
+                        <input type="number" id="current_address_months_count" name="current_address_months_count"
+                            required>
                     </div>
                     <div class="form-group">
                         <label for="prev_address_months_count">Previous Address Duration (Months)</label>
@@ -93,7 +96,8 @@
                 <div class="form-grid" id="account-details">
                     <div class="form-group">
                         <label for="intended_balcon_amount">Intended Balance Amount</label>
-                        <input type="number" id="intended_balcon_amount" name="intended_balcon_amount" min="-1000" max="1000" step="0.000000001" required>
+                        <input type="number" id="intended_balcon_amount" name="intended_balcon_amount" min="-1000"
+                            max="1000" step="0.000000001" required>
                     </div>
                     <div class="form-group">
                         <label for="proposed_credit_limit">Proposed Credit Limit</label>
@@ -125,15 +129,18 @@
                 <div class="form-grid" id="transaction-patterns">
                     <div class="form-group">
                         <label for="velocity_6h">Velocity (6 Hours)</label>
-                        <input type="number" id="velocity_6h" name="velocity_6h" min="-1000" max="100000" step="0.00000001" required>
+                        <input type="number" id="velocity_6h" name="velocity_6h" min="-1000" max="100000"
+                            step="0.00000001" required>
                     </div>
                     <div class="form-group">
                         <label for="velocity_24h">Velocity (24 Hours)</label>
-                        <input type="number" id="velocity_24h" name="velocity_24h" min="-1000" max="100000" step="0.00000001" required>
+                        <input type="number" id="velocity_24h" name="velocity_24h" min="-1000" max="100000"
+                            step="0.00000001" required>
                     </div>
                     <div class="form-group">
                         <label for="velocity_4w">Velocity (4 Weeks)</label>
-                        <input type="number" id="velocity_4w" name="velocity_4w" min="-1000" max="100000" step="0.00000001" required>
+                        <input type="number" id="velocity_4w" name="velocity_4w" min="-1000" max="100000"
+                            step="0.00000001" required>
                     </div>
                     <div class="form-group">
                         <label for="zip_count_4w">ZIP Count (4 Weeks)</label>
@@ -157,7 +164,8 @@
                     </div>
                     <div class="form-group">
                         <label for="name_email_similarity">Name-Email Similarity</label>
-                        <input type="number" id="name_email_similarity" name="name_email_similarity" min="0" max="1" step="0.000000001" required>
+                        <input type="number" id="name_email_similarity" name="name_email_similarity" min="0" max="1"
+                            step="0.000000001" required>
                     </div>
                     <div class="form-group">
                         <label for="device_os">Device OS</label>
@@ -169,15 +177,18 @@
                     </div>
                     <div class="form-group">
                         <label for="device_distinct_emails_8w">Device Distinct Emails (8 Weeks)</label>
-                        <input type="number" id="device_distinct_emails_8w" name="device_distinct_emails_8w" min="0" required>
+                        <input type="number" id="device_distinct_emails_8w" name="device_distinct_emails_8w" min="0"
+                            required>
                     </div>
                     <div class="form-group">
                         <label for="date_of_birth_distinct_emails_4w">DOB Distinct Emails (4 Weeks)</label>
-                        <input type="number" id="date_of_birth_distinct_emails_4w" name="date_of_birth_distinct_emails_4w" min="0" required>
+                        <input type="number" id="date_of_birth_distinct_emails_4w"
+                            name="date_of_birth_distinct_emails_4w" min="0" required>
                     </div>
                     <div class="form-group">
                         <label for="session_length_in_minutes">Session Length (Minutes)</label>
-                        <input type="number" id="session_length_in_minutes" name="session_length_in_minutes" min="0" step="0.0000000001"required>
+                        <input type="number" id="session_length_in_minutes" name="session_length_in_minutes" min="0"
+                            step="0.0000000001" required>
                     </div>
                     <div class="form-group">
                         <label for="keep_alive_session">Keep Alive Session</label>
@@ -246,7 +257,7 @@
             keep_alive_session: { min: 0, max: 1 },
             fraud_bool: { min: 0, max: 1 },
             foreign_request: { min: 0, max: 1 },
-            month: { min: 0, max: 7},
+            month: { min: 0, max: 7 },
             days_since_request: { min: 1, max: 10000 }
         };
         //income options
@@ -254,16 +265,16 @@
 
         // Employment status options
         const employmentStatuses = ['CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG'];
-        
+
         // Housing status options
         const housingStatuses = ['BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG'];
 
         // Payment type options
         const paymentTypes = ['AA', 'AB', 'AC', 'AD', 'AE'];
-        
+
         // Device OS options
         const deviceOSs = ['windows', 'macintosh', 'linux', 'x11', 'other'];
-        
+
         // Source options
         const sources = ['INTERNET', 'TELEAPP'];
 
@@ -308,7 +319,7 @@
         function generateRandomValues(sectionId) {
             const section = document.getElementById(sectionId);
             const inputs = section.querySelectorAll('input');
-        
+
             // Generate random values for each input in the section
             inputs.forEach(input => {
                 if (input.id === 'employment_status') {
@@ -382,5 +393,5 @@
         console.log(getRandomHousingStatus());
     </script>
 </body>
-</html>
 
+</html>
