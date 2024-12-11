@@ -46,7 +46,15 @@ fi
 echo "Downloading dataset from Google Drive..."
 wget "https://drive.usercontent.google.com/download?id=1gDHsL7iJsXjvkIY1VLb5IwlJ6AD236ic&export=download&confirm=t" -O Data/Base.csv || { echo "Failed to download dataset. Please check the link."; exit 1; }
 
-# Step 8: Final message
+# Step 8: Open the app
+echo "Opening /fraud/app.py..."
+if [ -f "flask_gui/app.py" ]; then
+    python fraud/app.py || { echo "Failed to open /fraud/app.py. Ensure the file exists and is valid."; exit 1; }
+else
+    echo "The file /fraud/app.py does not exist. Skipping..."
+fi
+
+# Step 9: Final message
 echo "Setup complete!"
 echo "To activate the virtual environment, run:"
 echo "source bank/bin/activate"
