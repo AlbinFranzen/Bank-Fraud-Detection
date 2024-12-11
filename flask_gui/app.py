@@ -2,18 +2,26 @@ from flask import Flask, render_template, request
 import joblib  # To load the trained machine learning model
 import jsonify
 import pandas as pd
+import numpy as np
+def recall_at_fpr(y_true, y_scores, target_fpr):
+    from sklearn.metrics import roc_curve
+    fpr, tpr, thresholds = roc_curve(y_true, y_scores)
+    idx = np.where(fpr <= target_fpr)[0][-1] if np.any(fpr <= target_fpr) else None
+    return tpr[idx] if idx is not None else 0.0
+
+
 
 # Get preprocessor
 try:
-    preprocess_pipeline = joblib.load('preprocess_pipeline.joblib')
+    preprocess_pipeline = joblib.load('./flask_gui/preprocess_pipeline.joblib')
 except FileNotFoundError:
-    print("Pipeline file not found. Ensure 'fraud_detection_pipeline.joblib' exists.")
+    print("Pipeline file not found. Ensure 'preprocess_pipeline.joblib' exists.")
     preprocess_pipeline = None
 
 app = Flask(__name__)
 
 # Load the pre-trained machine learning model
-model = joblib.load("logistic_model.joblib")
+model = joblib.load("./flask_gui/gradb.joblib")
 
 @app.route("/")
 def index():
