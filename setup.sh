@@ -55,9 +55,9 @@ else
 fi
 
 # Step 8: Open the app
-echo "Opening /fraud/app.py..."
+echo "Opening /flask_gui/app.py..."
 if [ -f "flask_gui/app.py" ]; then
-    python fraud/app.py || { echo "Failed to open /fraud/app.py. Ensure the file exists and is valid."; exit 1; }
+    python flask_gui/app.py || { echo "Failed to open /fraud/app.py. Ensure the file exists and is valid."; exit 1; }
 else
     echo "The file /fraud/app.py does not exist. Skipping..."
 fi
