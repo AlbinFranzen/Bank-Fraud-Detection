@@ -12,6 +12,8 @@ Fraudulent bank accounts are a problem for many banks since they lose money from
 
 [Project report paper](ECS_171_Final_Project_Report.pdf)
 
+Authors: Michael Nguyen Jr, Albin Franzén, Isabel Shic, Nidhi, Ruibin Zhu
+
 
 
  
