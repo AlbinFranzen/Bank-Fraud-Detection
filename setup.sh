@@ -42,9 +42,17 @@ else
     echo "No requirements.txt found, skipping dependency installation."
 fi
 
-# Step 7: Download the dataset with wget
-echo "Downloading dataset from Google Drive..."
-wget "https://drive.usercontent.google.com/download?id=1gDHsL7iJsXjvkIY1VLb5IwlJ6AD236ic&export=download&confirm=t" -O Data/Base.csv || { echo "Failed to download dataset. Please download Base.csv from https://www.kaggle.com/datasets/sgpjesus/bank-account-fraud-dataset-neurips-2022 and place it in ./Data/Base.csv."; exit 1; }
+# Step 7: Check for and download the dataset
+DATASET_PATH="Data/Base.csv"
+if [ -f "$DATASET_PATH" ]; then
+    echo "Dataset already exists at $DATASET_PATH. Skipping download."
+else
+    echo "Dataset not found. Downloading dataset from Google Drive..."
+    wget "https://drive.usercontent.google.com/download?id=1gDHsL7iJsXjvkIY1VLb5IwlJ6AD236ic&export=download&confirm=t" -O "$DATASET_PATH" || { 
+        echo "Failed to download dataset. Please download Base.csv from https://www.kaggle.com/datasets/sgpjesus/bank-account-fraud-dataset-neurips-2022 and place it in $DATASET_PATH."; 
+        exit 1; 
+    }
+fi
 
 # Step 8: Open the app
 echo "Opening /fraud/app.py..."
