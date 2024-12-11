@@ -54,10 +54,22 @@ else
     }
 fi
 
-# Step 8: Open the app
+# Step 8: Open the app and navigate to the URL
 echo "Opening /flask_gui/app.py..."
 if [ -f "flask_gui/app.py" ]; then
-    python flask_gui/app.py || { echo "Failed to open /fraud/app.py. Ensure the file exists and is valid."; exit 1; }
+    python flask_gui/app.py &
+    FLASK_PID=$!
+    echo "Waiting for the Flask app to start..."
+    sleep 2  # Give Flask time to start
+    echo "Navigating to http://127.0.0.1:5000 in your default browser..."
+    if command -v xdg-open &> /dev/null; then
+        xdg-open http://127.0.0.1:5000
+    elif command -v open &> /dev/null; then
+        open http://127.0.0.1:5000
+    else
+        echo "Could not detect a command to open the browser. Please open http://127.0.0.1:5000 manually."
+    fi
+    wait $FLASK_PID  # Wait for the Flask process to exit
 else
     echo "The file /fraud/app.py does not exist. Skipping..."
 fi
